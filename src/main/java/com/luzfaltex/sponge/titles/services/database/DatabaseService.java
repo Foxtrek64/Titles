@@ -10,36 +10,46 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DatabaseService implements IDatabaseService {
 
-    private SqlService sqlService;
+    private final SqlService sqlService;
     private final Titles _plugin;
+    private static final String Uri = "jdbc:sqlite:titles.sqlite";
 
     public DatabaseService(Titles plugin) {
-        Sponge.getServiceManager().provide(SqlService.class).get();
+        sqlService = Sponge.getServiceManager().provide(SqlService.class).get();
         _plugin = plugin;
+    }
+
+    public javax.sql.DataSource getDataSource() throws SQLException {
+        return getDataSource(Uri);
     }
 
     @Override
     public javax.sql.DataSource getDataSource(String jdbcUrl) throws SQLException {
-        return sqlService.getDataSource(jdbcUrl);
+        return sqlService.getDataSource(_plugin, jdbcUrl);
     }
 
     @Override
     public ResultSet executeQuery(String query) throws SQLException {
-        String uri = "jdbc:sqlite:titles.sqlite";
-
-        try (Connection connection = getDataSource(uri).getConnection();
+        try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet results = statement.executeQuery()) {
 
             return results;
         }
     }
+
+    @Override
+    public int executeUpdate(String statement) throws SQLException {
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement pStatement = connection.prepareStatement(statement)) {
+            return pStatement.executeUpdate();
+        }
+    }
+
 
     @Override
     public List<TitleEntry> getAvailableUserTitles(Node permissionNode) throws SQLException {
@@ -79,6 +89,49 @@ public class DatabaseService implements IDatabaseService {
                         .withGroup(results.getString("TitleGroup"))
                         .build());
             } else return Optional.empty();
+        } catch (SQLException e) {
+            _plugin.getLogger().error("SQLException caught when executing query: " + query, e);
+            throw e;
+        }
+    }
+
+    @Override
+    public Set<String> getTitleGroups() throws SQLException {
+        String query = "SELECT DISTINCT TitleGroup FROM Titles";
+
+        Set<String> groups = new HashSet<>();
+
+        try (ResultSet results = executeQuery(query)) {
+            while (results.next()) {
+                groups.add(results.getString("TitleGroup"));
+            }
+        } catch (SQLException se) {
+            _plugin.getLogger().error("SQLException caught when executing query: " + query, se);
+            throw se;
+        }
+
+        return groups;
+    }
+
+    @Override
+    public boolean createTitle(String titleName, String groupName) throws SQLException {
+        groupName = groupName.toLowerCase();
+
+        String query = "INSERT INTO Titles (Title, TitleGroup) VALUES ('{titleName}', '{groupName}')";
+
+        query
+                .replace("{titleName}", titleName)
+                .replace("{groupName}", groupName);
+
+        try {
+            int result = executeUpdate(query);
+
+            if (result == 1) return true;
+            else return false;
+
+        } catch (SQLException se) {
+            _plugin.getLogger().error("SQLException caught when executing query: " + query, se);
+            throw se;
         }
     }
 }

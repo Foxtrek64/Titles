@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spongepowered:spongeapi:7.0.0'
+    compile 'org.spongepowered:spongeapi:7.1.0'
     compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
     compile 'me.lucko.luckperms:luckperms-api:4.4'
     compile 'com.google.code.gson:gson:2.8.5'

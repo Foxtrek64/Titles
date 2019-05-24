@@ -2,7 +2,6 @@ package com.luzfaltex.sponge.titles.services.commands;
 
 import com.google.common.collect.ObjectArrays;
 import com.luzfaltex.sponge.titles.modules.CommandModule;
-import com.luzfaltex.sponge.titles.modules.HelpModule;
 import com.luzfaltex.sponge.titles.Titles;
 import com.luzfaltex.sponge.titles.annotations.Command;
 import com.luzfaltex.sponge.titles.modules.InfoModule;
@@ -33,17 +32,19 @@ public class CommandService implements ICommandService {
         CommandSpec.Builder masterSpec = CommandSpec.builder()
                 .permission("luzfaltex.titles.base")
                 .description(Text.of("Base command for Titles"))
-                .executor((CommandSource src, CommandContext args) -> new InfoModule().execute(src, args));
+                .executor(new InfoModule()::execute);
 
         for (Class<? extends CommandModule> command : subTypes) {
             Command commandAnnotation = command.getAnnotation(Command.class);
+
+            if (commandAnnotation.reflectionIgnore()) continue;
 
             CommandModule cmd = command.cast(CommandModule.class);
 
             CommandSpec.Builder builder = CommandSpec.builder()
                     .description(Text.of(commandAnnotation.description()))
                     .permission(commandAnnotation.permission())
-                    .executor((CommandSource src, CommandContext args) -> cmd.execute(src, args));
+                    .executor(cmd::execute);
             String[] commandWithAliases = ObjectArrays.concat(commandAnnotation.name(), commandAnnotation.aliases());
 
             masterSpec.child(cmd.build(builder), commandWithAliases);

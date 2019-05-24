@@ -16,6 +16,8 @@ import me.rojo8399.placeholderapi.impl.PlaceholderServiceImpl;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -23,6 +25,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -45,6 +48,10 @@ public class Titles {
 
     @Inject
     private Logger _logger;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path _configDir;
 
     private PlaceholderService _placeholderService;
     private ILuckPermsService _luckPermsService;
@@ -71,7 +78,7 @@ public class Titles {
 
         _placeholderService.loadAll(this, this).stream()
                 .map(builder ->
-                    builder.description("Returns the player's selected Id"))
+                    builder.description("Returns the player's selected Title"))
                 .map(builder -> builder.author("Foxtrek_64").version("1.0"))
                 .forEach(builder -> {
                     try {

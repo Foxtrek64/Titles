@@ -49,9 +49,15 @@ public enum Message {
     SelectedTitleOther("&a{}'s &b selected title is currently &a{}", true),
 
     TitlesList("&aTitles:", true),
-    TitlesListEntry("&f- &3{}", true),
+    // id title
+    TitlesListEntry("&f- &9{} &3{}", true),
+
+    GroupsList("&aGroups:", true),
+    // group
+    GroupsListEntry("&f- &3{}", true),
 
     CommandsList("&aCommands:", true),
+    // command (aliases) description
     CommandsListEntry("&f- &3{} &f({}) &b{}", true);
 
 
@@ -75,9 +81,9 @@ public enum Message {
     }
 
     private static String format(String s, Object... objects) {
+        s = s.replace("{Prefix}", colorize(Prefix.getRawMessage()));
         for (int i = 0; i < objects.length; i++) {
             Object o = objects[i];
-            s = s.replace("{Prefix}", colorize(Prefix.getRawMessage()));
             s = s.replace("{" + i + "}", String.valueOf(o));
         }
         return s;
