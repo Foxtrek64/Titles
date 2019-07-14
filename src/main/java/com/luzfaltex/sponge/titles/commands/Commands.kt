@@ -42,7 +42,7 @@ import org.spongepowered.api.text.action.TextActions
 import org.spongepowered.api.text.format.TextColors
 import java.util.Optional
 
-@CommandAlias("titles")
+@Subcommand("titles")
 class Commands : BaseCommand() {
 
     @Dependency
