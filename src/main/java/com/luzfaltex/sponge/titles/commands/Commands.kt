@@ -42,7 +42,9 @@ import org.spongepowered.api.text.action.TextActions
 import org.spongepowered.api.text.format.TextColors
 import java.util.Optional
 
-@Subcommand("titles")
+
+
+@CommandAlias("titles")
 class Commands : BaseCommand() {
 
     @Dependency
@@ -169,7 +171,7 @@ class Commands : BaseCommand() {
     }
 
     @Subcommand("create")
-    class createModule : BaseCommand() {
+    inner class CreateModule : BaseCommand() {
 
         @Dependency
         private lateinit var plugin: Titles
@@ -205,7 +207,7 @@ class Commands : BaseCommand() {
     }
 
     @Subcommand("delete")
-    class deleteModule : BaseCommand() {
+    inner class DeleteModule : BaseCommand() {
 
         @Dependency
         private lateinit var plugin: Titles
