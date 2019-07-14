@@ -1,0 +1,22 @@
+[
+    {
+        "modid": "titles",
+        "name": "Titles",
+        "version": "0.1-API7",
+        "description": "A simple plugin which allows for the display of a title or occupation.",
+        "url": "https://github.com/ravenrockrp/Titles",
+        "authorList": [
+            "Foxtrek_64"
+        ],
+        "dependencies": [
+            "luckperms",
+            "placeholderapi",
+            "spongeapi@7.1.0"
+        ],
+        "requiredMods": [
+            "luckperms",
+            "placeholderapi",
+            "spongeapi@7.1.0"
+        ]
+    }
+]
