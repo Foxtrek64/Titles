@@ -48,12 +48,11 @@ class Commands : BaseCommand() {
     @Dependency
     private lateinit var plugin: Titles
 
-    private val version: Optional<String> = plugin.pluginContainer.version
-
     @HelpCommand
     @Subcommand("?|help")
     @CommandPermission("luzfaltex.titles.base")
     fun onHelp(source: CommandSource, help: CommandHelp) {
+        val version: Optional<String> = plugin.pluginContainer.version
         source.sendMessage(Text.of(Message.Info.getFormattedMessage(version.orElse("???"))))
         help.showHelp()
     }
@@ -62,6 +61,7 @@ class Commands : BaseCommand() {
     @Description("Shows plugin information")
     @CommandPermission("luzfaltex.titles.base")
     fun onUnknownCommand(source: CommandSource) {
+        val version: Optional<String> = plugin.pluginContainer.version
         source.sendMessage(Text.of(Message.Info.getFormattedMessage(version.orElse("???"))))
         source.sendMessage(Text.of(Message.ViewAvailableCommands.getFormattedMessage("titles")))
     }
@@ -94,8 +94,8 @@ class Commands : BaseCommand() {
     @Description("Allows for a user to retrieve a user's title.")
     @CommandPermission("luzfaltex.titles.get.others.base")
     fun onGetOther(source: CommandSource, @Values("@players") target: Player) {
-        val plugin = plugin.dataService.getSelectedTitle(target.uniqueId)
-        source.sendMessage(Text.of(Message.SelectedTitleOther.getFormattedMessage(target.name, plugin.name)))
+        val title = plugin.dataService.getSelectedTitle(target.uniqueId)
+        source.sendMessage(Text.of(Message.SelectedTitleOther.getFormattedMessage(target.name, title.name)))
     }
 
     @Subcommand("set")

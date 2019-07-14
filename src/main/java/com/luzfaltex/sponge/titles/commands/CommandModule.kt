@@ -91,12 +91,12 @@ class CommandModule(private val commandManager: SpongeCommandManager, private va
             validatePlayerTitle(player.uniqueId, titleId)
         }
         commandManager.commandConditions.addCondition(String::class.java, "uniqueTitle") { _, _, titleId ->
-            // a title with the specified id is *not* present
+            // Ensures a title with the specified id is *not* present
             if (Sponge.getRegistry().getType(TitleCatalog::class.java, titleId).isPresent)
                 throw ConditionFailedException(Message.CreateTitleFailure.getFormattedMessage("The specified title '$titleId' already exists"))
         }
         commandManager.commandConditions.addCondition(String::class.java, "uniqueGroup") { _, _, groupId ->
-            // A group with the specified id is *not* present
+            // Ensures a group with the specified id is *not* present
             if (Sponge.getRegistry().getType(GroupCatalog::class.java, groupId.toLowerCase()).isPresent)
                 throw ConditionFailedException(Message.CreateGroupFailure.getFormattedMessage("The specified group '$groupId' already exists"))
         }
