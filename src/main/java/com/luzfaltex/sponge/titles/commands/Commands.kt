@@ -33,6 +33,7 @@ import com.luzfaltex.sponge.titles.catalogs.GroupCatalog
 import com.luzfaltex.sponge.titles.catalogs.TitleCatalog
 import com.luzfaltex.sponge.titles.results.Result
 import com.luzfaltex.sponge.titles.services.confirmation.IConfirmAction
+import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.CommandSource
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.service.pagination.PaginationList
@@ -283,14 +284,34 @@ class Commands : BaseCommand() {
     }
 
     @Subcommand("group")
-    class groupCommand : BaseCommand() {
+    @Description("Modify a group")
+    @CommandPermission("luzfaltex.titles.group.edit.base")
+    fun onEdit(source: CommandSource,
+               @Conditions("groupExists") @Values("@groups") groupId: String,
+               @Values("@action") action: Action,
+               @Values("@type") type: SubjectType,
+               @Conditions("subject") @Values("@subject") subject: String) {
 
-        @Dependency
-        private lateinit var plugin: Titles
+        val group = plugin.groupCatalogModule.getById(groupId).get()
 
-        // TODO: Add User
-        // TODO: Remove User
-        // TODO: Add Title
-        // TODO: Remove Title
+        if (type == SubjectType.USER) {
+            val player = Sponge.getServer().getPlayer(subject)
+            if (player.isPresent) {
+                if (action == Action.ADD) {
+                    group.addUser(player.get().uniqueId)
+                } else {
+                    group.removeUser(player.get().uniqueId)
+                }
+            } else throw IllegalArgumentException(subject)
+        } else {
+            val title = plugin.titleCatalogModule.getById(subject)
+            if (title.isPresent) {
+                if (action == Action.ADD) {
+                    group.addTitle(title.get())
+                } else {
+                    group.removeTitle(title.get())
+                }
+            } else throw IllegalArgumentException(subject)
+        }
     }
 }
